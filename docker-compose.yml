@@ -29,7 +29,7 @@ services:
       retries: 5
       start_period: 15s
     environment:
-      DATABASE_URL: postgresql://school:${POSTGRES_PASSWORD}@db:5432/school
+      DATABASE_URL: postgresql://school:${POSTGRES_PASSWORD_URLENCODED:?Set POSTGRES_PASSWORD_URLENCODED in .env}@db:5432/school
       SITE_URL: http://localhost:3001
       COOKIE_SECURE: "false"
       SESSION_SECRET: ${SESSION_SECRET:?Create a .env file first (see .env.docker.example)}

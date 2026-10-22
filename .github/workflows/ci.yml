@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_PASSWORD_URLENCODED: ${{ secrets.POSTGRES_PASSWORD_URLENCODED }}
       SESSION_SECRET: ci-session-secret-change-me-32-characters-long
       ADMIN_EMAIL: ci@example.com
       ADMIN_PASSWORD: CiPassword12345
@@ -26,7 +27,7 @@ jobs:
         run: |
           set -euo pipefail
           for attempt in {1..30}; do
-            status="$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}' site-web-1 2>/dev/null || true)"
+            status="$(docker compose ps -q web | xargs -r docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}' 2>/dev/null || true)"
             if [[ "$status" == "healthy" ]]; then
               exit 0
             fi
@@ -53,3 +54,5 @@ jobs:
       - name: Stop Compose services
         if: always()
         run: docker compose down -v
+
+
